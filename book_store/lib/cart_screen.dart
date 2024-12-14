@@ -1,4 +1,3 @@
-import 'package:book_store/bookhome.dart';
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatefulWidget {
@@ -14,10 +13,10 @@ class _CartScreenState extends State {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.white),
-        //   onPressed: () {},
-        // ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {},
+        ),
         title: const Text('Cart', style: TextStyle(color: Colors.red)),
         actions: [
           TextButton(

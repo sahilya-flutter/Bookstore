@@ -1,6 +1,6 @@
 import 'package:book_store/create_account.dart';
 import 'package:book_store/home.dart';
-import 'package:book_store/signup.dart';
+
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
