@@ -5,11 +5,15 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final Widget? icon;
   final Widget? icon2;
+  final ValueChanged<String>? onChanged; // Corrected the type for onChanged
+
   const CustomTextField({
     super.key,
     required this.hintText,
     this.obscureText = false,
-    this.icon, this.icon2,
+    this.icon,
+    this.icon2,
+    this.onChanged, // Made optional for flexibility
   });
 
   @override
@@ -28,6 +32,7 @@ class CustomTextField extends StatelessWidget {
       ),
       child: TextField(
         obscureText: obscureText,
+        onChanged: onChanged, // Assign the passed callback here
         decoration: InputDecoration(
           prefixIcon: icon2,
           suffixIcon: icon,

@@ -89,7 +89,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const HomePage(),
+                        builder: (context) => const HomePage(
+                          isGuest: false,
+                        ),
                       ));
                     },
                     style: ElevatedButton.styleFrom(

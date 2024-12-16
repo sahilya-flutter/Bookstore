@@ -1,94 +1,97 @@
 import 'package:book_store/bookhome.dart';
 import 'package:book_store/cart_screen.dart';
 import 'package:book_store/serach_screen.dart';
+import 'package:book_store/account_screen.dart';
 import 'package:flutter/material.dart';
 
-import 'account_screen.dart';
-
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool isGuest;  // Accepting the isGuest parameter
+
+  const HomePage({super.key, required this.isGuest});  // Constructor to accept isGuest
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
+  bool _isDisposed = false;
 
   final List<Widget> _pages = [
-    BookHomePage(),
+    const BookHomePage(),
     const SearchScreen(),
-    const CartScreen(),
+    const CartScreen(cartItems: []),
     const AccountScreen(),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _isDisposed = false;
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    if (_currentIndex != index) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
+        backgroundColor: Colors.blue.shade300,
+        title: const Text(
+          "Mega BookStore",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        title: const Text("Mega BookStore"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Notifications tapped!")),
-              );
-            },
-          ),
-          GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Profile photo tapped!")),
-              );
-            },
-            child: const Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/book.jpg'),
-                radius: 16,
-              ),
-            ),
-          ),
-        ],
+        centerTitle: false,
+        automaticallyImplyLeading: false,
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (!_isDisposed) {
+            _onTabTapped(index);
+          }
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, size: 28),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.search, size: 28),
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart, size: 28),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, size: 28),
             label: 'Account',
           ),
         ],
-        selectedItemColor: Colors.red,
+        selectedItemColor: Colors.blue.shade300,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(color: Colors.grey),
       ),
     );
   }

@@ -11,6 +11,10 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _CreateAccountState extends State<CreateAccount> {
+  void searchBooks(String value) {
+    // Implement search functionality here
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,21 +37,24 @@ class _CreateAccountState extends State<CreateAccount> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const CustomTextField(
+                    CustomTextField(
                       hintText: 'Username',
-                      obscureText: false,
+                      obscureText: false, onChanged: (value) { searchBooks(value); },
                     ),
                     const SizedBox(height: 16.0),
-                    const CustomTextField(
+                    CustomTextField(
                       hintText: 'Password',
                       obscureText: true,
+                      onChanged: (value) {
+                        searchBooks(value);
+                      },
                     ),
                     const SizedBox(height: 24.0),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) =>  HomePage(),
+                            builder: (context) => const HomePage(isGuest: false,),
                           ),
                         );
 

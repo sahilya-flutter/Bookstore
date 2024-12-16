@@ -1,148 +1,136 @@
+import 'package:book_store/account/addres_screen.dart';
+// import 'package:book_store/account/order.dart';
 import 'package:flutter/material.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  final List<CartItemData> cartItems;
+
+  const CartScreen({super.key, required this.cartItems});
+
   @override
-  State createState() => _CartScreenState();
+  State<CartScreen> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State {
+class _CartScreenState extends State<CartScreen> {
+  double get totalPrice {
+    return widget.cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+  }
+
+  void _increaseQuantity(int index) {
+    setState(() {
+      widget.cartItems[index].quantity++;
+    });
+  }
+
+  void _decreaseQuantity(int index) {
+    setState(() {
+      if (widget.cartItems[index].quantity > 1) {
+        widget.cartItems[index].quantity--;
+      } else {
+        widget.cartItems.removeAt(index);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {},
-        ),
-        title: const Text('Cart', style: TextStyle(color: Colors.red)),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'EDIT ITEMS',
-              style: TextStyle(color: Colors.orange),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: widget.cartItems.length,
+                itemBuilder: (context, index) {
+                  final item = widget.cartItems[index];
+                  return CartItem(
+                    title: item.title,
+                    price: item.price,
+                    quantity: item.quantity,
+                    imageUrl: item.imageUrl,
+                    onIncrease: () => _increaseQuantity(index),
+                    onDecrease: () => _decreaseQuantity(index),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
+            Container(
               padding: const EdgeInsets.all(16.0),
-              children: const [
-                CartItem(
-                  image: 'assets/images/books.jpeg', // Replace with real assets
-                  title: '1984',
-                  price: 15,
-                  quantity: 2,
-                ),
-                CartItem(
-                  image:
-                      'assets/images/BudgetManagment.jpeg', // Replace with real assets
-                  title: 'Budget Managment',
-                  price: 32,
-                  quantity: 1,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'DELIVERY ADDRESS',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'EDIT',
-                        style: TextStyle(color: Colors.orange, fontSize: 12),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'TOTAL:',
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      Text(
+                        '\$${totalPrice.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(252, 2, 22, 1),
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                  ],
-                ),
-                const Text(
-                  '2118 Thornridge Cir. Syracuse',
-                  style: TextStyle(color: Colors.black, fontSize: 16),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'TOTAL:',
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          '\$96',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddressFormScreen(),
                         ),
-                        const SizedBox(width: 8),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'Breakdown',
-                            style: TextStyle(color: Colors.black, fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(252, 2, 22, 1),
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      );
+                    },
+                    child: const Text(
+                      'PLACE ORDER',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
-                  onPressed: () {},
-                  child: const Text(
-                    'PLACE ORDER',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class CartItem extends StatelessWidget {
-  final String image;
+  final String imageUrl;
   final String title;
-  final int price;
+  final double price;
   final int quantity;
+  final VoidCallback onIncrease;
+  final VoidCallback onDecrease;
 
   const CartItem({
-    required this.image,
+    super.key,
+    required this.imageUrl,
     required this.title,
     required this.price,
     required this.quantity,
+    required this.onIncrease,
+    required this.onDecrease,
   });
 
   @override
@@ -151,7 +139,7 @@ class CartItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[900],
+        color: Colors.blue[500],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -161,10 +149,10 @@ class CartItem extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: AssetImage(image),
-                fit: BoxFit.cover,
-              ),
+            ),
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(width: 16),
@@ -178,7 +166,7 @@ class CartItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '\$$price',
+                  '\$${price.toStringAsFixed(2)}',
                   style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ],
@@ -187,7 +175,7 @@ class CartItem extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: onDecrease,
                 icon: const Icon(Icons.remove, color: Colors.white),
               ),
               Text(
@@ -195,7 +183,7 @@ class CartItem extends StatelessWidget {
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: onIncrease,
                 icon: const Icon(Icons.add, color: Colors.white),
               ),
             ],
@@ -205,3 +193,18 @@ class CartItem extends StatelessWidget {
     );
   }
 }
+
+class CartItemData {
+  final String imageUrl;
+  final String title;
+  final double price;
+  int quantity;
+
+  CartItemData({
+    required this.imageUrl,
+    required this.title,
+    required this.price,
+    this.quantity = 1,
+  });
+}
+
