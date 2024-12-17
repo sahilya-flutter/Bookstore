@@ -5,7 +5,8 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final Widget? icon;
   final Widget? icon2;
-  final ValueChanged<String>? onChanged; // Corrected the type for onChanged
+  final ValueChanged<String>? onChanged;
+  final TextEditingController controller; // Corrected the type for onChanged
 
   const CustomTextField({
     super.key,
@@ -13,7 +14,8 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.icon,
     this.icon2,
-    this.onChanged, // Made optional for flexibility
+    this.onChanged,
+    required this.controller, // Made optional for flexibility
   });
 
   @override
@@ -31,6 +33,7 @@ class CustomTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         onChanged: onChanged, // Assign the passed callback here
         decoration: InputDecoration(

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:book_store/bookhome.dart';
-import 'package:book_store/details_page.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-// import 'package:book_store/book_home_page.dart';
+import 'package:book_store/bookhome.dart';
+import 'package:book_store/details_page.dart';
 import 'package:book_store/custom_field.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -14,13 +14,53 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  List<Book> searchResults = [];
+  List<Book> allBooks = []; // Holds all books fetched initially
+  List<Book> searchResults = []; // Holds search results
   bool isLoading = false;
+  TextEditingController search = TextEditingController();
+  // Fetch all books when the screen is first loaded
+  Future<void> fetchAllBooks() async {
+    setState(() {
+      isLoading = true;
+    });
 
+    final response = await http.get(
+      Uri.parse(
+          'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40'), // Corrected the typo in the URL
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Debugging: print the raw API response
+      print('API Response: $data');
+
+      setState(() {
+        // Ensure the response has the expected structure
+        allBooks = (data['items'] as List<dynamic>)
+            .map<Book>((item) =>
+                Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
+            .toList();
+
+        // Initialize searchResults with allBooks when first loaded
+        searchResults = List.from(allBooks);
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      // Handle error
+      log("Failed to load books: ${response.statusCode}");
+    }
+  }
+
+  // Filter books based on the search query
   Future<void> searchBooks(String query) async {
     if (query.isEmpty) {
       setState(() {
-        searchResults.clear();
+        searchResults =
+            List.from(allBooks); // Show all books when the query is empty
       });
       return;
     }
@@ -29,26 +69,23 @@ class _SearchScreenState extends State<SearchScreen> {
       isLoading = true;
     });
 
-    final response = await http.get(
-      Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=${Uri.encodeQueryComponent(query)}&maxResults=20'),
-    );
+    // Perform search logic by matching title or author
+    final filteredBooks = allBooks.where((book) {
+      return book.title.toLowerCase().contains(query.toLowerCase()) ||
+          book.authors.any(
+              (author) => author.toLowerCase().contains(query.toLowerCase()));
+    }).toList();
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        searchResults = (data['items'] as List<dynamic>)
-            .map<Book>((item) =>
-                Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
-            .toList();
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      // Handle error
-    }
+    setState(() {
+      searchResults = filteredBooks;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllBooks(); // Fetch all books when the screen is loaded
   }
 
   @override
@@ -59,10 +96,11 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             CustomTextField(
+              controller: search,
               hintText: "Search by title...",
               icon2: const Icon(Icons.search),
               onChanged: (value) {
-                searchBooks(value);
+                searchBooks(value); // Call searchBooks when text changes
               },
             ),
             const SizedBox(height: 10),
@@ -120,7 +158,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     builder: (context) => BookDetailsPage(
                                       title: book.title,
                                       authors: book.authors,
-                                      description: book.description,
+                                      description: book.description!,
                                       imageUrl: book.imageUrl,
                                     ),
                                   ),

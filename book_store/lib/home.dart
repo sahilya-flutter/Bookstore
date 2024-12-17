@@ -1,15 +1,17 @@
 import 'package:book_store/bookhome.dart';
-import 'package:book_store/cart_screen.dart';
+import 'package:book_store/book_gridscreen.dart';
 import 'package:book_store/serach_screen.dart';
 import 'package:book_store/account_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  final bool isGuest;  // Accepting the isGuest parameter
+  final bool isGuest; // Accepting the isGuest parameter
 
-  const HomePage({super.key, required this.isGuest});  // Constructor to accept isGuest
+  const HomePage(
+      {super.key, required this.isGuest}); // Constructor to accept isGuest
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -20,8 +22,10 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const BookHomePage(),
     const SearchScreen(),
-    const CartScreen(cartItems: []),
-    const AccountScreen(),
+    const BookGridScreen(
+      cartItems: [],
+    ),
+     AccountScreen(),
   ];
 
   @override
@@ -77,8 +81,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart, size: 28),
-            label: 'Cart',
+            icon: Icon(Icons.audiotrack, size: 28),
+            label: 'E-book',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person, size: 28),
