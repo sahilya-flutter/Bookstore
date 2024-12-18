@@ -7,6 +7,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
 class BookHomePage extends StatefulWidget {
+  
   const BookHomePage({super.key});
 
   @override
@@ -180,7 +181,7 @@ class _BookHomePageState extends State<BookHomePage> {
                     ),
                     itemCount: books.length,
                     itemBuilder: (context, index) {
-                      return BookCard(books[index]);
+                      return BookCard(books[index], downloadedBooks: const [],);
                     },
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16.0),

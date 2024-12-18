@@ -8,7 +8,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
 
-
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -209,7 +208,7 @@ class _SignupState extends State<Signup> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset("assets/images/images.jpeg"),
+                    Image.asset('assets/images/bookstudy.png'),
                     const SizedBox(
                       height: 24.0,
                     ),

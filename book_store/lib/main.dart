@@ -1,5 +1,4 @@
 import 'package:book_store/main_splash_screen.dart';
-import 'package:book_store/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';

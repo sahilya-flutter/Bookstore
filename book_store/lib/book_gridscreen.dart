@@ -7,7 +7,7 @@ import 'details_page.dart';
 class BookGridScreen extends StatefulWidget {
   final List<CartItemData> cartItems;
 
-  const BookGridScreen({super.key,required this.cartItems});
+  const BookGridScreen({super.key, required this.cartItems});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -26,7 +26,7 @@ class _BookGridScreenState extends State<BookGridScreen> {
     _flutterTts = FlutterTts();
     _flutterTts.setLanguage("en-US");
     _flutterTts.setPitch(1.0);
-    _flutterTts.setSpeechRate(0.5);
+    _flutterTts.setSpeechRate(0.3);
     _fetchBooks();
   }
 
@@ -166,7 +166,6 @@ class _BookGridScreenState extends State<BookGridScreen> {
     );
   }
 }
-
 
 class CartItemData {
   final String imageUrl;

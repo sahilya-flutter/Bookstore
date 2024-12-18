@@ -26,7 +26,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     final response = await http.get(
       Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40'), // Corrected the typo in the URL
+          'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40'),
     );
 
     if (response.statusCode == 200) {
@@ -97,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             CustomTextField(
               controller: search,
-              hintText: "Search by title...",
+              hintText: "Search by title or authors...",
               icon2: const Icon(Icons.search),
               onChanged: (value) {
                 searchBooks(value); // Call searchBooks when text changes

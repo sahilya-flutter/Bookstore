@@ -3,19 +3,14 @@ import 'package:book_store/firebase.dart';
 import 'package:book_store/home.dart';
 import 'package:book_store/signup.dart';
 import 'package:flutter/material.dart';
-import 'package:book_store/create_account.dart';
-import 'package:book_store/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'dart:developer';
-import 'dart:io';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'package:intl/intl.dart';
+
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});
@@ -159,14 +154,14 @@ class _CreateAccountState extends State<CreateAccount> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Image.asset("assets/images/images.jpeg"),
+                    Image.asset('assets/images/bookstudy.png'),
                     const SizedBox(
                       height: 20,
                     ),
                     CustomTextField(
                       controller: email,
-                      hintText: 'Username',
-                      icon2: Icon(Icons.person),
+                      hintText: 'Email',
+                      icon2: const Icon(Icons.person),
                       obscureText: false,
                       onChanged: (value) {
                         searchBooks(value);
@@ -176,7 +171,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     CustomTextField(
                       controller: password,
                       hintText: 'Password',
-                      icon2: Icon(Icons.lock),
+                      icon2: const Icon(Icons.lock),
                       icon: IconButton(
                           onPressed: togglepass,
                           icon: Icon(isobscure == true
@@ -222,7 +217,7 @@ class _CreateAccountState extends State<CreateAccount> {
                                   fontSize: 20),
                             ),
                           )
-                        : CircularProgressIndicator(),
+                        : const CircularProgressIndicator(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     const BookGridScreen(
       cartItems: [],
     ),
-     AccountScreen(),
+     const AccountScreen(),
   ];
 
   @override

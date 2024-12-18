@@ -1,12 +1,14 @@
-import 'package:book_store/book_gridscreen.dart';
+import 'package:book_store/account_screen.dart';
 import 'package:book_store/bookhome.dart';
 import 'package:book_store/details_page.dart';
+import 'package:book_store/download_book.dart';
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
+   final List<Books> downloadedBooks;
 
-  const BookCard(this.book, {super.key});
+  const BookCard(this.book, {super.key, required this.downloadedBooks});
 
   // Helper method to shorten the book title
   String _getShortenedTitle(String title) {
@@ -146,7 +148,13 @@ class BookCard extends StatelessWidget {
                     // Buy Button
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) =>
+                                DownloadedBooksScreen(downloadedBooks),
+                          ));
+                        },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.red,

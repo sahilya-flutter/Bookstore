@@ -12,8 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-
   FirebaseService firebaseService = FirebaseService();
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   height: 250,
                   width: 250,
                   child: Image.asset(
-                    'assets/images/images.jpeg',
+                    'assets/images/bookstudy.png',
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -64,7 +62,6 @@ class _SplashScreenState extends State<SplashScreen> {
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                   child: ElevatedButton(
                     onPressed: () {
-
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const CreateAccount(),
                       ));
