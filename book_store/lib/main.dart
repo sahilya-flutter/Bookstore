@@ -1,3 +1,4 @@
+import 'package:book_store/main_splash_screen.dart';
 import 'package:book_store/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -18,7 +19,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: MainSplashScreen(),
     );
   }
 }

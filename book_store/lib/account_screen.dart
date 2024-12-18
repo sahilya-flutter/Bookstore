@@ -19,7 +19,7 @@ class AccountScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4C57D6),
+                  color: Colors.blueAccent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding:
