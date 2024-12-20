@@ -10,8 +10,6 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-
-
 class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});
 
@@ -27,89 +25,109 @@ class _CreateAccountState extends State<CreateAccount> {
     });
   }
 
-  void searchBooks(String value) {
-    // Implement search functionality here
-  }
   FirebaseService firebaseService = FirebaseService();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   bool loading = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final users = FirebaseFirestore.instance.collection('userData').obs;
-  final fcmTokens = FirebaseFirestore.instance.collection('FCMTOKENS').obs;
   final GetStorage box = GetStorage();
   final DatabaseReference db =
       FirebaseDatabase.instance.ref().child('userData');
-  Future<void> emailLogin(
-      BuildContext context, String email, String password) async {
+
+  void emailLogin(BuildContext context, String email, String password) async {
     setState(() {
       loading = true;
     });
 
-    log("emain and pass is $email and $password");
+    log("Email and password are $email and $password");
 
     try {
       // Attempt to sign in with email and password
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Check if the user is not null
-      if (userCredential.user != null) {
-        final userDoc = await users.value.doc(userCredential.user!.uid).get();
-
-        if (userDoc.exists) {
-          // Fetch and store user data
-          // await box.write('login', 'login');
-          // await box.write('userName', userDoc["userName"]);
-          // await box.write('userId', userDoc["userId"]);
-
-          // log("Username is : ${box.read('userName')}, UserId is : ${box.read('userId')}");
-
-          Get.snackbar('Login Successful', 'Welcome to my app',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.TOP);
-        } else {
-          Get.snackbar('Error', 'User data not found',
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.TOP);
-        }
-      } else {
-        Get.snackbar('Error', 'User not found',
+      UserCredential? userCredential;
+      try {
+        userCredential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } catch (e) {
+        log("Error during sign-in: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login failed. Please try again.'),
             backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP);
+          ),
+        );
+        return;
+      }
+
+      // Check if userCredential is null
+      if (userCredential.user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No user found for that email or password.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Fetch user data from Firebase Realtime Database
+      final userRef = db.child(userCredential.user!.uid);
+      final userSnapshot = await userRef.get();
+
+      if (userSnapshot.exists) {
+        final userData = userSnapshot.value as Map<dynamic, dynamic>;
+
+        log('User data is $userData');
+
+        // Store user data in GetStorage for session management
+        await box.write('login', 'login');
+        await box.write('userName', userData["userName"]);
+        await box.write('userId', userData["userId"]);
+
+        // Navigate to HomePage after successful login
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(isGuest: true),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User data not found in the database.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = parseFirebaseAuthError(e.code);
-      Get.snackbar('User Alert', errorMessage,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP);
-
+        ),
+      );
       log('Email login error: $errorMessage');
     } catch (e) {
-      // Get.snackbar('Error', 'An unexpected error occurred.',
-      //     backgroundColor: Colors.red,
-      //     colorText: Colors.white,
-      //     snackPosition: SnackPosition.TOP);
-
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An unexpected error occurred.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       log('Email login error: $e');
     } finally {
       setState(() {
         loading = false;
       });
-      // Ensure loading is false at the end
     }
   }
 
   // Method to parse Firebase Auth errors
   String parseFirebaseAuthError(String errorCode) {
-    log('error code is $errorCode');
+    log('Error code is $errorCode');
 
     if (errorCode == 'weak-password') {
       return 'The password provided is too weak.';
@@ -132,7 +150,7 @@ class _CreateAccountState extends State<CreateAccount> {
     } else if (errorCode == "invalid-credential") {
       return 'Invalid Email id or Password';
     } else {
-      return '';
+      return 'An unknown error occurred.';
     }
   }
 
@@ -155,52 +173,34 @@ class _CreateAccountState extends State<CreateAccount> {
                 child: Column(
                   children: [
                     Image.asset('assets/images/bookstudy.png'),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     CustomTextField(
-                      controller: email,
+                      controller: emailController,
                       hintText: 'Email',
                       icon2: const Icon(Icons.person),
                       obscureText: false,
-                      onChanged: (value) {
-                        searchBooks(value);
-                      },
+                      onChanged: (value) {},
                     ),
                     const SizedBox(height: 16.0),
                     CustomTextField(
-                      controller: password,
+                      controller: passwordController,
                       hintText: 'Password',
                       icon2: const Icon(Icons.lock),
                       icon: IconButton(
-                          onPressed: togglepass,
-                          icon: Icon(isobscure == true
-                              ? Icons.visibility_off
-                              : Icons.visibility)),
-                      obscureText: true,
-                      onChanged: (value) {
-                        searchBooks(value);
-                      },
+                        onPressed: togglepass,
+                        icon: Icon(isobscure
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                      ),
+                      obscureText: isobscure,
+                      onChanged: (value) {},
                     ),
                     const SizedBox(height: 24.0),
                     loading == false
                         ? ElevatedButton(
                             onPressed: () {
-                              emailLogin(context, email.text.trim(),
-                                      password.text.trim())
-                                  .then(
-                                (value) {
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => const HomePage(
-                                        isGuest: false,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-
-                              // Handle login button press
+                              emailLogin(context, emailController.text.trim(),
+                                  passwordController.text.trim());
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -223,14 +223,15 @@ class _CreateAccountState extends State<CreateAccount> {
                       children: [
                         const Text("Don't have an account?"),
                         TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const Signup(),
-                              ));
-                            },
-                            child: const Text('Sign up here'))
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const Signup(),
+                            ));
+                          },
+                          child: const Text('Sign up here'),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),

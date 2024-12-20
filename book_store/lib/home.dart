@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   final bool isGuest; // Accepting the isGuest parameter
+  
 
   const HomePage(
-      {super.key, required this.isGuest}); // Constructor to accept isGuest
+      {super.key, required this.isGuest,}); // Constructor to accept isGuest
 
   @override
   // ignore: library_private_types_in_public_api
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     const BookGridScreen(
       cartItems: [],
     ),
-     const AccountScreen(),
+    const AccountScreen(),
   ];
 
   @override
@@ -34,11 +35,11 @@ class _HomePageState extends State<HomePage> {
     _isDisposed = false;
   }
 
-  @override
-  void dispose() {
-    _isDisposed = true;
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _isDisposed = true;
+  //   super.dispose();
+  // }
 
   void _onTabTapped(int index) {
     if (_currentIndex != index) {
@@ -51,18 +52,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
-        title: const Text(
-          "Mega BookStore",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-      ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

@@ -1,71 +1,99 @@
+import 'dart:async';
 import 'dart:math';
-
 import 'package:book_store/create_account.dart';
 import 'package:book_store/download_book.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:firebase_database/firebase_database.dart'; // Import Firebase Realtime Database
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AccountScreen extends StatefulWidget {
+  
   const AccountScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AccountScreenState createState() => _AccountScreenState();
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  String userName = "Sahil Maharnawar"; // User's name
-  String userHandle = "@sahilmaharnawar"; // User's handle
-  List<Books> downloadedBooks = []; // List of user's downloaded books
-  List<Books> books = [
-    Books(
-      title: "Flutter for Beginners",
-      authors: ["John Doe"],
-      price: 19.99,
-      discountedPrice: 14.99,
-      description: "A beginner's guide to Flutter.",
-      imageUrl: "",
-    ),
-    Books(
-      title: "Advanced Flutter",
-      authors: ["Jane Doe"],
-      price: 29.99,
-      discountedPrice: 24.99,
-      description: "An advanced guide to Flutter.",
-      imageUrl: "",
-    ),
-  ];
+  String userName = ""; // Initially empty, will fetch from Firebase
+  String email = ""; // Initially empty, will fetch from Firebase
+  String name = ""; // Initially empty, will fetch from Firebase
 
-  void _navigateToDownloadedBooks() {
-    if (downloadedBooks.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("No Downloads"),
-            content: const Text("You haven't downloaded any books yet."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Close"),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      Navigator.push(
-        context,
+  final DatabaseReference db =
+      FirebaseDatabase.instance.ref().child('userData');
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+      await GetStorage().erase();
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => DownloadedBooksScreen(downloadedBooks),
+          builder: (context) => const CreateAccount(),
         ),
       );
+      // ignore: empty_catches
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  // Method to fetch user data from Firebase Realtime Database
+  void fetchUserData() async {
+    try {
+      // Get the current Firebase Auth user ID
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final userId = user.uid; // Get the UID of the current user
+        final snapshot = await db.child(userId).get();
+
+        if (snapshot.exists) {
+          setState(() {
+            // Cast the values from Object to String
+            userName = snapshot.child('userName').value?.toString() ??
+                ''; // Fetch username
+            email =
+                snapshot.child('email').value?.toString() ?? ''; // Fetch email
+            name = snapshot.child('name').value?.toString() ?? ''; // Fetch name
+          });
+        } else {
+          // Handle case where data does not exist
+          print('No user data available');
+        }
+      } else {
+        // Handle case where the user is not logged in
+        print('No user is logged in');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
     }
+  }
+
+  void _navigateToDownloadedBooks() {
+    // Your existing navigation logic
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade300,
+        title: const Text(
+          "Account",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+      ),
       backgroundColor: const Color(0xFFF5F5F7),
       body: SingleChildScrollView(
         child: Column(
@@ -93,7 +121,9 @@ class _AccountScreenState extends State<AccountScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          userName,
+                          userName.isNotEmpty
+                              ? userName
+                              : "Loading...", // Display username or loading message
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -102,7 +132,19 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          userHandle,
+                          email.isNotEmpty
+                              ? email
+                              : "Loading...", // Display email or loading message
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          name.isNotEmpty
+                              ? name
+                              : "Loading...", // Display name or loading message
                           style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
@@ -130,6 +172,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 subtitle: "See your downloaded books",
                 onTap: () {
                   _navigateToDownloadedBooks();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        DownloadedBooksScreen(downloadedBooks:[]),
+                  ));
                 },
               ),
               buildListTile(
@@ -310,12 +356,7 @@ class _AccountScreenState extends State<AccountScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const CreateAccount()), // Navigate to Signup page
-                );
+                signOut();
               },
               child: const Text("Log Out"),
             ),

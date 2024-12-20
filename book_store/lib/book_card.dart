@@ -1,16 +1,16 @@
 import 'package:book_store/account_screen.dart';
 import 'package:book_store/bookhome.dart';
 import 'package:book_store/details_page.dart';
+import 'package:book_store/db_helper.dart';
 import 'package:book_store/download_book.dart';
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
   final Book book;
-   final List<Books> downloadedBooks;
+  final List<Book> downloadedBooks;
 
   const BookCard(this.book, {super.key, required this.downloadedBooks});
 
-  // Helper method to shorten the book title
   String _getShortenedTitle(String title) {
     List<String> words = title.split(' ');
     if (words.length > 2) {
@@ -19,7 +19,6 @@ class BookCard extends StatelessWidget {
     return title;
   }
 
-  // Helper method to navigate to the book details page
   void _navigateToDetailsPage(BuildContext context, Book book) {
     Navigator.push(
       context,
@@ -35,6 +34,33 @@ class BookCard extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _downloadBook(BuildContext context, Book book) async {
+  final dbHelper = DBHelper.instance;
+
+  // Save the book to the SQLite database
+  await dbHelper.insertBook(book);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('${book.title} has been downloaded!'),
+      backgroundColor: Colors.green,
+    ),
+  );
+
+  // Fetch the updated list of downloaded books
+  final downloadedBooks = await dbHelper.fetchBooks();
+
+  // Navigate to the DownloadedBooksScreen with the updated list
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => DownloadedBooksScreen(
+        downloadedBooks: downloadedBooks,
+      ),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +94,6 @@ class BookCard extends StatelessWidget {
                       width: double.infinity,
                       height: double.infinity,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        // Fallback if image fails
                         color: Colors.grey[200],
                         child: const Icon(Icons.book, color: Colors.grey),
                       ),
@@ -86,7 +111,6 @@ class BookCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Book Title
                 Text(
                   _getShortenedTitle(book.title),
                   maxLines: 1,
@@ -98,7 +122,6 @@ class BookCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
 
-                // Book Author(s)
                 Text(
                   book.authors.join(', '),
                   maxLines: 1,
@@ -110,7 +133,7 @@ class BookCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
 
-                // Price Section with discount check
+                // Price Section
                 if (book.discountedPrice < book.price) ...[
                   Text(
                     'Price: \$${book.price.toStringAsFixed(2)}',
@@ -148,12 +171,8 @@ class BookCard extends StatelessWidget {
                     // Buy Button
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) =>
-                                DownloadedBooksScreen(downloadedBooks),
-                          ));
+                        onPressed: () async {
+                          await _downloadBook(context, book);
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,

@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:book_store/book_card.dart';
+import 'package:book_store/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
 class BookHomePage extends StatefulWidget {
-  
   const BookHomePage({super.key});
 
   @override
@@ -54,11 +54,12 @@ class _BookHomePageState extends State<BookHomePage> {
   }
 
   Future<void> fetchBooks() async {
-    if (isLoading) return;
-    setState(() {
-      isLoading = true;
-    });
+  if (isLoading) return;
+  setState(() {
+    isLoading = true;
+  });
 
+  try {
     final response = await http.get(
       Uri.parse(
           'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40&startIndex=${(currentPage - 1) * 40}'),
@@ -66,32 +67,68 @@ class _BookHomePageState extends State<BookHomePage> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+
+      List<Book> fetchedBooks = (data['items'] as List<dynamic>)
+          .map<Book>((item) =>
+              Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
+          .toList();
+
+      final dbHelper = DBHelper.instance;
+
+      // Save books to database
+      for (var book in fetchedBooks) {
+        await dbHelper.insertBook(book);
+      }
+
       setState(() {
-        books.addAll((data['items'] as List<dynamic>)
-            .map<Book>((item) =>
-                Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
-            .toList());
-        popularBooks = books.take(5).toList(); // Top 5 popular books
+        books.addAll(fetchedBooks);
+        popularBooks = books.take(5).toList();
         currentPage++;
         isLoading = false;
       });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      // Handle error
     }
+  } catch (e) {
+    print("Error fetching books: $e");
+    setState(() {
+      isLoading = false;
+    });
   }
+}
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+// Load books from SQLite on app start
+
+
+Future<void> loadBooksFromDB() async {
+  final dbHelper = DBHelper.instance;
+  List<Book> localBooks = await dbHelper.fetchBooks();
+  setState(() {
+    books = localBooks;
+    popularBooks = books.take(5).toList();
+  });
+}
+
+
+  // @override
+  // void dispose() {
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade300,
+        title: const Text(
+          "Mega BookStore",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -181,7 +218,10 @@ class _BookHomePageState extends State<BookHomePage> {
                     ),
                     itemCount: books.length,
                     itemBuilder: (context, index) {
-                      return BookCard(books[index], downloadedBooks: const [],);
+                      return BookCard(
+                        books[index],
+                        downloadedBooks: const [],
+                      );
                     },
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16.0),
@@ -227,5 +267,26 @@ class Book {
       imageUrl: json['imageLinks']?['thumbnail'] as String?,
       price: (20 + (Random().nextInt(50) + 1)).toDouble(),
     );
+  }
+
+  factory Book.fromMap(Map<String, dynamic> map) {
+    return Book(
+      title: map['title'] as String,
+      authors: (map['authors'] as String).split(','),
+      description: map['description'] as String?,
+      imageUrl: map['imageUrl'] as String?,
+      price: map['price'] as double,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'authors': authors.join(','),
+      'description': description,
+      'imageUrl': imageUrl,
+      'price': price,
+      'discountedPrice': discountedPrice,
+    };
   }
 }

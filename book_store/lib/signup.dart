@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -41,7 +42,7 @@ class _SignupState extends State<Signup> {
   final DatabaseReference db =
       FirebaseDatabase.instance.ref().child('userData');
   final Rx<File?> profileImage = Rx<File?>(null);
-  Future<void> signUp(
+  void signUp(
     BuildContext context,
     String email,
     String password, {
@@ -60,10 +61,10 @@ class _SignupState extends State<Signup> {
         signupLoading = false;
       });
 
-      Get.snackbar('User Alert', 'User already exists',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP);
+      // Get.snackbar('User Alert', 'User already exists',
+      //     backgroundColor: Colors.red,
+      //     colorText: Colors.white,
+      //     snackPosition: SnackPosition.TOP);
       return;
     }
 
@@ -72,47 +73,49 @@ class _SignupState extends State<Signup> {
       UserCredential value = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       log('Email and password are $email, $password');
+      log('usernname is $userName and name is $name');
       log("Username is ${userName} uid is ${value.user!.uid} num is ${name}");
 
       String uid = await _getNextUserId();
+      Map<String, dynamic> userData = {
+        "userName": userName ?? '',
+        "userId": uid,
+        "email": email,
+        "name": name ?? '',
+        "signUpTime": DateFormat('hh:mm:ss a').format(DateTime.now()),
+        "signUpDate": DateFormat('dd-MMM-yyyy').format(DateTime.now()),
+      };
 
-      // Upload profile image to Firebase Storage and get the URL
-
-      // Map<String, dynamic> userData = {
-      //   "userName": userName,
-      //   "userId": uid,
-      //   "email": email,
-      //   "name": name,
-      //   "signUpTime": DateFormat('hh:mm:ss a').format(DateTime.now()),
-      //   "signUpDate": DateFormat('dd-MMM-yyyy').format(DateTime.now()),
-      // };
-
-      // // Insert user data into Firestore with image URL
-      // await db.child(value.user!.uid).set(userData);
-
-      Get.snackbar('Signup Successful', 'Please login',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP);
+      // Insert user data into Firestore with image URL
+      await db.child(value.user!.uid).set(userData);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('')));
+      // Get.snackbar('Signup Successful', 'Please login',
+      //     backgroundColor: Colors.green,
+      //     colorText: Colors.white,
+      //     snackPosition: SnackPosition.TOP);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const CreateAccount(),
+      ));
     } on FirebaseAuthException catch (e) {
       setState(() {
         signupLoading = false;
       });
 
       String errorMessage = parseFirebaseAuthError(e.code);
-      Get.snackbar('Error', errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP);
+      // Get.snackbar('Error', errorMessage,
+      //     backgroundColor: Colors.red,
+      //     colorText: Colors.white,
+      //     snackPosition: SnackPosition.TOP);
     } catch (e) {
       setState(() {
         signupLoading = false;
       });
 
-      Get.snackbar('Error', 'An unexpected error occurred.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP);
+      // Get.snackbar('Error', 'An unexpected error occurred.',
+      //     backgroundColor: Colors.red,
+      //     colorText: Colors.white,
+      //     snackPosition: SnackPosition.TOP);
     } finally {
       setState(() {
         signupLoading = false;
@@ -216,7 +219,7 @@ class _SignupState extends State<Signup> {
                       controller: nameController,
                       hintText: "Name",
                       obscureText: false,
-                      icon2: Icon(Icons.person_2_outlined),
+                      icon2: const Icon(Icons.person_2_outlined),
                     ),
                     const SizedBox(
                       height: 15,
@@ -225,7 +228,7 @@ class _SignupState extends State<Signup> {
                       controller: usernameController,
                       hintText: "Username",
                       obscureText: false,
-                      icon2: Icon(Icons.person),
+                      icon2: const Icon(Icons.person),
                     ),
                     const SizedBox(
                       height: 15,
@@ -234,7 +237,7 @@ class _SignupState extends State<Signup> {
                       controller: emailController,
                       hintText: "email",
                       obscureText: false,
-                      icon2: Icon(Icons.email_outlined),
+                      icon2: const Icon(Icons.email_outlined),
                     ),
                     const SizedBox(
                       height: 15,
@@ -258,21 +261,13 @@ class _SignupState extends State<Signup> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 0, vertical: 30),
                             child: ElevatedButton(
-                              onPressed: () async {
-                                await signUp(
+                              onPressed: () {
+                                signUp(
                                   context,
                                   emailController.text.trim(),
                                   passwordController.text.trim(),
                                   name: nameController.text.trim(),
                                   userName: usernameController.text.trim(),
-                                ).then(
-                                  (value) {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CreateAccount(),
-                                    ));
-                                  },
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -291,7 +286,7 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           )
-                        : CircularProgressIndicator(),
+                        : const CircularProgressIndicator(),
                     Row(
                       children: [
                         const Text("Alredy have an account?"),

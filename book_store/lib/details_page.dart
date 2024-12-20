@@ -78,11 +78,11 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _flutterTts.stop(); // Stop TTS when the widget is disposed
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _flutterTts.stop(); // Stop TTS when the widget is disposed
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:book_store/create_account.dart';
+import 'package:book_store/home.dart';
 import 'package:book_store/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
@@ -10,15 +13,34 @@ class MainSplashScreen extends StatefulWidget {
 }
 
 class _MainSplashScreenState extends State<MainSplashScreen> {
+  final GetStorage box = GetStorage();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Navigate to LoginPage after 3 seconds
+  //   Timer(const Duration(seconds: 5), () {
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => SplashScreen()),
+  //     );
+  //   });
+  // }
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    // Navigate to LoginPage after 3 seconds
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SplashScreen()),
-      );
+    Future.delayed(const Duration(seconds: 3), () async {
+      box.read("login") == 'login'
+          ? Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const HomePage(isGuest: false),
+              ),
+            )
+          : Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const CreateAccount(),
+              ),
+            );
     });
   }
 
