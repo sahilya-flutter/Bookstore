@@ -1,15 +1,18 @@
+import 'dart:developer';
+
 import 'package:book_store/bookhome.dart';
 import 'package:book_store/details_page.dart';
 import 'package:book_store/home.dart';
 import 'package:flutter/material.dart';
 
 class DownloadedBooksScreen extends StatelessWidget {
-  final List<Book> downloadedBooks; // List of downloaded Book objects
+  // List of downloaded Book objects
 
-  const DownloadedBooksScreen({super.key, required this.downloadedBooks});
+  const DownloadedBooksScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    log("downloaded books lenght is ${downloadednewBooks.length}");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Downloaded Books"),
@@ -22,7 +25,7 @@ class DownloadedBooksScreen extends StatelessWidget {
           },
         ),
       ),
-      body: downloadedBooks.isEmpty
+      body: downloadednewBooks.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -37,11 +40,12 @@ class DownloadedBooksScreen extends StatelessWidget {
               ),
             )
           : ListView.builder(
-              itemCount: downloadedBooks.length,
+              itemCount: downloadednewBooks.length,
               itemBuilder: (context, index) {
-                final book = downloadedBooks[index];
+                final book = downloadednewBooks[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
                   child: ListTile(
                     leading: book.imageUrl != null && book.imageUrl!.isNotEmpty
                         ? ClipRRect(
@@ -57,13 +61,13 @@ class DownloadedBooksScreen extends StatelessWidget {
                           )
                         : const Icon(Icons.book, size: 50),
                     title: Text(
-                      book.title,
+                      book.title ?? "No Title",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      book.authors.join(', '),
+                      book!.author ?? "No Author",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: Colors.grey[600]),
@@ -71,13 +75,13 @@ class DownloadedBooksScreen extends StatelessWidget {
                     trailing: IconButton(
                       icon: const Icon(Icons.arrow_forward),
                       onPressed: () {
-                        // Navigate to details or perform an action
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => BookDetailsPage(
-                              title: book.title,
-                              authors: book.authors,
-                              description: book.description ?? 'No description available.',
+                              title: book.title ?? '',
+                              authors: [book.author ?? ''],
+                              description: book.description ??
+                                  'No description available.',
                               imageUrl: book.imageUrl ?? '',
                             ),
                           ),

@@ -1,11 +1,17 @@
 import 'dart:convert';
 import 'dart:math';
-
+import 'dart:developer' as dev;
 import 'package:book_store/book_card.dart';
+import 'package:book_store/bookscreen/drawer.dart';
+import 'package:book_store/bookscreen/futurebook.dart';
+import 'package:book_store/bookscreen/marathibook.dart';
+import 'package:book_store/bookscreen/sanskritbook.dart';
 import 'package:book_store/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
+
+final List<DownloadBook> downloadednewBooks = [];
 
 class BookHomePage extends StatefulWidget {
   const BookHomePage({super.key});
@@ -15,28 +21,15 @@ class BookHomePage extends StatefulWidget {
 }
 
 class _BookHomePageState extends State<BookHomePage> {
+  String selectedCategory = 'All Books';
+  List<Book> marathiBooks = [];
+  List<Book> sanskritBooks = [];
+  List<Book> futureBooks = [];
   List<Book> books = [];
   List<Book> popularBooks = [];
   int currentPage = 1;
   bool isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  final List<String> localBookImages = [
-    'assets/images/book1.jpg',
-    'assets/images/book2.jpg',
-    'assets/images/book3.jpg',
-    'assets/images/book4.jpg',
-    'assets/images/book5.jpg',
-    'assets/images/book6.jpg',
-    'assets/images/book7.jpg',
-  ];
-
-  final List<String> categories = [
-    "Trending",
-    "Travel",
-    "Documentary",
-    "Motivation",
-    "Sad",
-  ];
 
   @override
   void initState() {
@@ -54,109 +47,128 @@ class _BookHomePageState extends State<BookHomePage> {
   }
 
   Future<void> fetchBooks() async {
-  if (isLoading) return;
-  setState(() {
-    isLoading = true;
-  });
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
 
-  try {
-    final response = await http.get(
-      Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40&startIndex=${(currentPage - 1) * 40}'),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40&startIndex=${(currentPage - 1) * 40}'),
+      );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
 
-      List<Book> fetchedBooks = (data['items'] as List<dynamic>)
-          .map<Book>((item) =>
-              Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
-          .toList();
+        List<Book> fetchedBooks = (data['items'] as List<dynamic>)
+            .map<Book>((item) =>
+                Book.fromJson(item['volumeInfo'] as Map<String, dynamic>))
+            .toList();
 
-      final dbHelper = DBHelper.instance;
+        final dbHelper = DBHelper.instance;
 
-      // Save books to database
-      for (var book in fetchedBooks) {
-        await dbHelper.insertBook(book);
+        // Save books to database
+        for (var book in fetchedBooks) {
+          await dbHelper.insertBook(book);
+        }
+
+        setState(() {
+          books.addAll(fetchedBooks);
+          popularBooks = books.take(5).toList();
+          currentPage++;
+          isLoading = false;
+        });
       }
-
+    } catch (e) {
+      dev.log("Error fetching books: $e");
       setState(() {
-        books.addAll(fetchedBooks);
-        popularBooks = books.take(5).toList();
-        currentPage++;
         isLoading = false;
       });
     }
-  } catch (e) {
-    print("Error fetching books: $e");
+  }
+
+  final List<String> localBookImages = [
+    'assets/images/book1.jpg',
+    'assets/images/book2.jpg',
+    'assets/images/book3.jpg',
+    'assets/images/book4.jpg',
+    'assets/images/book5.jpg',
+    'assets/images/book6.jpg',
+    'assets/images/book7.jpg',
+  ];
+
+  Future<void> loadBooksFromDB() async {
+    final dbHelper = DBHelper.instance;
+    List<Book> localBooks = await dbHelper.fetchBooks();
     setState(() {
-      isLoading = false;
+      books = localBooks;
+      popularBooks = books.take(5).toList();
     });
   }
-}
 
-// Load books from SQLite on app start
-
-
-Future<void> loadBooksFromDB() async {
-  final dbHelper = DBHelper.instance;
-  List<Book> localBooks = await dbHelper.fetchBooks();
-  setState(() {
-    books = localBooks;
-    popularBooks = books.take(5).toList();
-  });
-}
-
-
-  // @override
-  // void dispose() {
-  //   _scrollController.dispose();
-  //   super.dispose();
-  // }
-
+  // Categories
+  final List<String> categories = [
+    "Trending",
+    "Travel",
+    "Documentary",
+    "Motivation",
+    "Sad",
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: const Color(0xFFCC5500),
         title: const Text(
-          "Mega BookStore",
+          "Book Store",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
       ),
+      drawer: SafeArea(child: DrawerWidget()),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             const SizedBox(height: 10),
 
-            // Carousel slider for local asset images
+            // Carousel slider
             CarouselSlider(
               options: CarouselOptions(
-                height: 250.0,
+                height: 200,
                 enlargeCenterPage: true,
                 autoPlay: true,
+                aspectRatio: 16 / 9,
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enableInfiniteScroll: true,
+                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                viewportFraction: 0.8,
               ),
               items: localBookImages.map((imagePath) {
                 return Builder(
                   builder: (BuildContext context) {
-                    return GestureDetector(
-                      onTap: () {
-                        // Add custom logic here if you want to navigate to a details page.
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          image: DecorationImage(
-                            image: AssetImage(
-                                imagePath), // Use AssetImage for local assets
-                            fit: BoxFit.fill,
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
                           ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.asset(
+                          imagePath,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
                         ),
                       ),
                     );
@@ -165,37 +177,35 @@ Future<void> loadBooksFromDB() async {
               }).toList(),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
-            // Categories row
+            // Categories
             SizedBox(
-              height: 40, // Height of the SizedBox
+              height: 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        // Randomly shuffle books on category tap
-                        books.shuffle();
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8.0),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          books.shuffle();
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFCC5500),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 3,
                       ),
-                      child: Center(
-                        child: Text(
-                          categories[index],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      child: Text(
+                        categories[index],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -204,17 +214,19 @@ Future<void> loadBooksFromDB() async {
               ),
             ),
 
-            // Displaying the grid of books
+            const SizedBox(height: 20),
+
+            // Books Grid
             isLoading
-                ? const Center(child: LinearProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio:
-                          0.6, // Controls the aspect ratio of each grid item
-                      mainAxisSpacing: 17.0, // Vertical space between items
-                      crossAxisSpacing: 5.0, // Horizontal space between items
+                      childAspectRatio: 0.65,
+                      mainAxisSpacing: 15.0,
+                      crossAxisSpacing: 10.0,
                     ),
                     itemCount: books.length,
                     itemBuilder: (context, index) {
@@ -223,10 +235,8 @@ Future<void> loadBooksFromDB() async {
                         downloadedBooks: const [],
                       );
                     },
-                    controller: _scrollController,
                     padding: const EdgeInsets.all(16.0),
-                    shrinkWrap:
-                        true, // Prevents GridView from expanding beyond its content
+                    shrinkWrap: true,
                   ),
           ],
         ),
@@ -235,8 +245,10 @@ Future<void> loadBooksFromDB() async {
   }
 }
 
+// Book Class
 class Book {
   final String title;
+  final int? id;
   final List<String> authors;
   final String? description;
   final String? imageUrl;
@@ -245,6 +257,7 @@ class Book {
 
   Book({
     required this.title,
+    this.id,
     required this.authors,
     this.description,
     this.imageUrl,
@@ -252,7 +265,7 @@ class Book {
   }) : discountedPrice = _applyRandomDiscount(price);
 
   static double _applyRandomDiscount(double originalPrice) {
-    final randomDiscount = Random().nextInt(51) + 20; // Discount between 20-70%
+    final randomDiscount = Random().nextInt(51) + 20;
     final discountMultiplier = (100 - randomDiscount) / 100;
     return originalPrice * discountMultiplier;
   }
@@ -265,7 +278,7 @@ class Book {
           .toList(),
       description: json['description'] as String?,
       imageUrl: json['imageLinks']?['thumbnail'] as String?,
-      price: (20 + (Random().nextInt(50) + 1)).toDouble(),
+      price: (20 + Random().nextInt(50) + 1).toDouble(),
     );
   }
 
@@ -289,4 +302,21 @@ class Book {
       'discountedPrice': discountedPrice,
     };
   }
+}
+
+// DownloadBook Class
+class DownloadBook {
+  final String? title;
+  final int? id;
+  final String? author;
+  final String? description;
+  final String? imageUrl;
+
+  DownloadBook({
+    this.title,
+    this.id,
+    this.author,
+    this.description,
+    this.imageUrl,
+  });
 }

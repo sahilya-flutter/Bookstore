@@ -54,7 +54,7 @@ class _CreateAccountState extends State<CreateAccount> {
       } catch (e) {
         log("Error during sign-in: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Login failed. Please try again.'),
             backgroundColor: Colors.red,
           ),
@@ -65,7 +65,7 @@ class _CreateAccountState extends State<CreateAccount> {
       // Check if userCredential is null
       if (userCredential.user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('No user found for that email or password.'),
             backgroundColor: Colors.red,
           ),
@@ -95,7 +95,7 @@ class _CreateAccountState extends State<CreateAccount> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('User data not found in the database.'),
             backgroundColor: Colors.red,
           ),
@@ -112,7 +112,7 @@ class _CreateAccountState extends State<CreateAccount> {
       log('Email login error: $errorMessage');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('An unexpected error occurred.'),
           backgroundColor: Colors.red,
         ),

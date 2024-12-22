@@ -88,8 +88,14 @@ class _SignupState extends State<Signup> {
 
       // Insert user data into Firestore with image URL
       await db.child(value.user!.uid).set(userData);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+        'Signup successful.',
+        style: TextStyle(
+          backgroundColor: Colors.green,
+          color: Colors.white,
+        ),
+      )));
       // Get.snackbar('Signup Successful', 'Please login',
       //     backgroundColor: Colors.green,
       //     colorText: Colors.white,
@@ -103,6 +109,15 @@ class _SignupState extends State<Signup> {
       });
 
       String errorMessage = parseFirebaseAuthError(e.code);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Error: $errorMessage',
+          style: const TextStyle(
+            backgroundColor: Colors.red,
+            color: Colors.white,
+          ),
+        ),
+      ));
       // Get.snackbar('Error', errorMessage,
       //     backgroundColor: Colors.red,
       //     colorText: Colors.white,
@@ -111,7 +126,15 @@ class _SignupState extends State<Signup> {
       setState(() {
         signupLoading = false;
       });
-
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          'An unexpected error occurred.',
+          style: TextStyle(
+            backgroundColor: Colors.red,
+            color: Colors.white,
+          ),
+        ),
+      ));
       // Get.snackbar('Error', 'An unexpected error occurred.',
       //     backgroundColor: Colors.red,
       //     colorText: Colors.white,
