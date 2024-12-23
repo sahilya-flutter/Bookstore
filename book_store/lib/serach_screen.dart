@@ -33,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
       final data = json.decode(response.body);
 
       // Debugging: print the raw API response
-      print('API Response: $data');
+      log('API Response: $data');
 
       setState(() {
         // Ensure the response has the expected structure
@@ -92,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: const Color(0xFFCC5500),
         title: const Text(
           "Search",
           style: TextStyle(

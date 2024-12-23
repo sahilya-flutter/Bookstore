@@ -167,7 +167,7 @@ class _BookHomePageState extends State<BookHomePage> {
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.asset(
                           imagePath,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           width: double.infinity,
                         ),
                       ),

@@ -287,8 +287,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _handleTtsControl,
-        child: _getFloatingActionButtonIcon(),
         elevation: 2,
+        child: _getFloatingActionButtonIcon(),
       ),
     );
   }

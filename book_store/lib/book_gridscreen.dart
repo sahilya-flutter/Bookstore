@@ -92,7 +92,7 @@ class _BookGridScreenState extends State<BookGridScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: const Color(0xFFCC5500),
         title: const Text(
           "E-book",
           style: TextStyle(

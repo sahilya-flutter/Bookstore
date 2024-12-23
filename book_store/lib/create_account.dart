@@ -33,8 +33,7 @@ class _CreateAccountState extends State<CreateAccount> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final users = FirebaseFirestore.instance.collection('userData').obs;
   final GetStorage box = GetStorage();
-  final DatabaseReference db =
-      FirebaseDatabase.instance.ref().child('userData');
+  final DatabaseReference db = FirebaseDatabase.instance.ref().child('userData');
 
   void emailLogin(BuildContext context, String email, String password) async {
     setState(() {
@@ -87,12 +86,29 @@ class _CreateAccountState extends State<CreateAccount> {
         await box.write('userName', userData["userName"]);
         await box.write('userId', userData["userId"]);
 
-        // Navigate to HomePage after successful login
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const HomePage(isGuest: true),
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful! Welcome back'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
           ),
         );
+
+        // Navigate to HomePage after successful login
+        await Future.delayed(const Duration(seconds: 1)); // Wait for snackbar to be visible
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const HomePage(isGuest: true),
+            ),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -188,9 +204,9 @@ class _CreateAccountState extends State<CreateAccount> {
                       icon2: const Icon(Icons.lock),
                       icon: IconButton(
                         onPressed: togglepass,
-                        icon: Icon(isobscure
-                            ? Icons.visibility_off
-                            : Icons.visibility),
+                        icon: Icon(
+                          isobscure ? Icons.visibility_off : Icons.visibility,
+                        ),
                       ),
                       obscureText: isobscure,
                       onChanged: (value) {},
@@ -199,8 +215,11 @@ class _CreateAccountState extends State<CreateAccount> {
                     loading == false
                         ? ElevatedButton(
                             onPressed: () {
-                              emailLogin(context, emailController.text.trim(),
-                                  passwordController.text.trim());
+                              emailLogin(
+                                context,
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -212,9 +231,10 @@ class _CreateAccountState extends State<CreateAccount> {
                             child: const Text(
                               'Log In',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 20),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           )
                         : const CircularProgressIndicator(),

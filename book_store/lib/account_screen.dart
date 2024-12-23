@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:book_store/create_account.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -63,7 +64,7 @@ class _AccountScreenState extends State<AccountScreen> {
         }
       }
     } catch (e) {
-      print('Error fetching user data: $e');
+      log('Error fetching user data: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -84,7 +85,7 @@ class _AccountScreenState extends State<AccountScreen> {
         await fetchUserData();
       }
     } catch (e) {
-      print('Error updating profile: $e');
+      log('Error updating profile: $e');
       _showErrorDialog('Failed to update profile. Please try again.');
     }
   }
@@ -140,7 +141,7 @@ class _AccountScreenState extends State<AccountScreen> {
         await _storage.remove('userData${user.uid}');
       }
     } catch (e) {
-      print('Error cleaning up user data: $e');
+      log('Error cleaning up user data: $e');
     }
   }
 
@@ -384,7 +385,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -393,7 +394,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 email,
                                 style: const TextStyle(
                                   fontSize: 16,
-                                  color: Colors.white70,
+                                  color: Colors.black,
                                 ),
                               ),
                             ],

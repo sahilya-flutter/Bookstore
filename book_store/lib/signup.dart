@@ -94,6 +94,7 @@ class _SignupState extends State<Signup> {
         style: TextStyle(
           backgroundColor: Colors.green,
           color: Colors.white,
+        
         ),
       )));
       // Get.snackbar('Signup Successful', 'Please login',

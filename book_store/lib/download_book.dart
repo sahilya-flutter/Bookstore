@@ -6,8 +6,6 @@ import 'package:book_store/home.dart';
 import 'package:flutter/material.dart';
 
 class DownloadedBooksScreen extends StatelessWidget {
-  // List of downloaded Book objects
-
   const DownloadedBooksScreen({super.key});
 
   @override

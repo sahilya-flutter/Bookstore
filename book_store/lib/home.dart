@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   final bool isGuest; // Accepting the isGuest parameter
-  
 
-  const HomePage(
-      {super.key, required this.isGuest,}); // Constructor to accept isGuest
+  const HomePage({
+    super.key,
+    required this.isGuest,
+  }); // Constructor to accept isGuest
 
   @override
   // ignore: library_private_types_in_public_api
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             label: 'Account',
           ),
         ],
-        selectedItemColor: Colors.blue.shade300,
+        selectedItemColor: const Color(0xFFCC5500),
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(

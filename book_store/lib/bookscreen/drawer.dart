@@ -1,5 +1,9 @@
+import 'package:book_store/bookscreen/bhagavatgita.dart';
+import 'package:book_store/bookscreen/dnyaneshwari.dart';
+import 'package:book_store/bookscreen/garudhpuran.dart';
+import 'package:book_store/bookscreen/hanumanchalisa.dart';
+import 'package:book_store/bookscreen/ramyan.dart';
 import 'package:book_store/bookscreen/readBook.dart';
-import 'package:book_store/bookscreen/sanskritbook.dart';
 import 'package:book_store/download_book.dart';
 import 'package:flutter/material.dart';
 
@@ -17,34 +21,34 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   final List<Map<String, dynamic>> bookMenuItems = [
     {
       "title": "छावा",
-      "icon": Icons.book,
-      "route": ChhavaBook(),
+      "icon": Icons.auto_stories,
+      "route": const ChhavaBook(),
       "pdf": "assets/pdf/vrukshmandir_anil_wakankar.pdf"
     },
     {
       "title": "ज्ञानेश्वरी",
       "icon": Icons.auto_stories,
-      "route": ChhavaBook(),
+      "route": const DnyaneshwariBook(),
     },
     {
       "title": "भगवद्गीता",
-      "icon": Icons.menu_book,
-      "route": ChhavaBook(),
+      "icon": Icons.auto_stories,
+      "route": const BhagvatGitaBook(),
     },
     {
       "title": "हनुमान चालीसा",
-      "icon": Icons.library_books,
-      "route": ChhavaBook(),
+      "icon": Icons.auto_stories,
+      "route": const HanumanChlisaBook(),
     },
     {
       "title": "गरुड पुराण",
-      "icon": Icons.history_edu,
-      "route": ChhavaBook(),
+      "icon": Icons.auto_stories,
+      "route": const GarudhPuranBook(),
     },
     {
       "title": "रामायण",
-      "icon": Icons.book_online,
-      "route": ChhavaBook(),
+      "icon": Icons.auto_stories,
+      "route": const RamaynBook(),
     },
   ];
 
@@ -57,7 +61,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/BookStore.png'),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
             child: Container(
@@ -73,7 +77,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                       image: const DecorationImage(
-                        image: AssetImage('assets/images/BookStore.png'),
+                        image: AssetImage('assets/images/book.jpg'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -105,19 +109,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   children: [
                     const Icon(
                       Icons.download,
-                      color: const Color(0xFFCC5500),
+                      color: Color(0xFFCC5500),
                     ),
                     GestureDetector(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DownloadedBooksScreen(),
+                                builder: (context) =>
+                                    const DownloadedBooksScreen(),
                               ));
                         },
                         child: const Text(
                           "Downloaded Books",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),

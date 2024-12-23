@@ -8,14 +8,14 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
-class ChhavaBook extends StatefulWidget {
-  const ChhavaBook({Key? key}) : super(key: key);
+class DnyaneshwariBook extends StatefulWidget {
+  const DnyaneshwariBook({super.key});
 
   @override
-  State<ChhavaBook> createState() => _ChhavaBookState();
+  State<DnyaneshwariBook> createState() => _DnyaneshwariBookState();
 }
 
-class _ChhavaBookState extends State<ChhavaBook> {
+class _DnyaneshwariBookState extends State<DnyaneshwariBook> {
   String? localPath;
   bool isLoading = true;
   PDFViewController? controller;
@@ -108,11 +108,10 @@ class _ChhavaBookState extends State<ChhavaBook> {
       });
 
       // Load PDF file
-      final bytes =
-          await rootBundle.load('assets/pdf/vrukshmandir_anil_wakankar.pdf');
+      final bytes = await rootBundle.load('assets/pdf/ganapti.pdf');
       final dir = await getTemporaryDirectory();
 
-      final file = File('${dir.path}/vrukshmandir_anil_wakankar.pdf');
+      final file = File('${dir.path}/ganapti.pdf');
       await file.writeAsBytes(bytes.buffer.asUint8List());
 
       // Extract text from PDF
@@ -293,7 +292,7 @@ class _ChhavaBookState extends State<ChhavaBook> {
         appBar: AppBar(
           backgroundColor: const Color(0xFFCC5500),
           title: const Text(
-            'छावा',
+            'गणपती अथर्वशीर्ष',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
