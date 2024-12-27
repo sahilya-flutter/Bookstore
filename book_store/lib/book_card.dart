@@ -225,16 +225,16 @@ class _BookCardState extends State<BookCard> {
     );
 
     // Fetch the updated list of downloaded books
-    final downloadedBooks = await dbHelper.fetchBooks();
+    // final downloadedBooks = await dbHelper.fetchBooks();
 
-    // Navigate to the DownloadedBooksScreen with the updated list
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => DownloadedBooksScreen(
-    //       downloadedBooks: downloadedBooks,
-    //     ),
-    //   ),
-    // );
+    // // Navigate to the DownloadedBooksScreen with the updated list
+    // // Navigator.of(context).push(
+    // //   MaterialPageRoute(
+    // //     builder: (context) => DownloadedBooksScreen(
+    // //       downloadedBooks: downloadedBooks,
+    // //     ),
+    // //   ),
+    // // );
   }
 
   @override

@@ -108,10 +108,10 @@ class _DnyaneshwariBookState extends State<DnyaneshwariBook> {
       });
 
       // Load PDF file
-      final bytes = await rootBundle.load('assets/pdf/ganapti.pdf');
+      final bytes = await rootBundle.load('assets/pdf/kshatriy.pdf');
       final dir = await getTemporaryDirectory();
 
-      final file = File('${dir.path}/ganapti.pdf');
+      final file = File('${dir.path}/kshatriy.pdf');
       await file.writeAsBytes(bytes.buffer.asUint8List());
 
       // Extract text from PDF
@@ -292,7 +292,7 @@ class _DnyaneshwariBookState extends State<DnyaneshwariBook> {
         appBar: AppBar(
           backgroundColor: const Color(0xFFCC5500),
           title: const Text(
-            'गणपती अथर्वशीर्ष',
+            'क्षत्रिय इतिहास',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

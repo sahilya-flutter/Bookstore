@@ -20,13 +20,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   // Book menu items with icons
   final List<Map<String, dynamic>> bookMenuItems = [
     {
-      "title": "छावा",
+      "title": "छत्रपती संभाजी महाराज",
       "icon": Icons.auto_stories,
       "route": const ChhavaBook(),
       "pdf": "assets/pdf/vrukshmandir_anil_wakankar.pdf"
     },
     {
-      "title": "ज्ञानेश्वरी",
+      "title": "क्षत्रिय इतिहास",
       "icon": Icons.auto_stories,
       "route": const DnyaneshwariBook(),
     },

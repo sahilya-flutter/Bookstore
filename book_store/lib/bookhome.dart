@@ -3,9 +3,6 @@ import 'dart:math';
 import 'dart:developer' as dev;
 import 'package:book_store/book_card.dart';
 import 'package:book_store/bookscreen/drawer.dart';
-import 'package:book_store/bookscreen/futurebook.dart';
-import 'package:book_store/bookscreen/marathibook.dart';
-import 'package:book_store/bookscreen/sanskritbook.dart';
 import 'package:book_store/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -17,6 +14,7 @@ class BookHomePage extends StatefulWidget {
   const BookHomePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _BookHomePageState createState() => _BookHomePageState();
 }
 
@@ -128,7 +126,7 @@ class _BookHomePageState extends State<BookHomePage> {
           ),
         ),
       ),
-      drawer: SafeArea(child: DrawerWidget()),
+      drawer: const SafeArea(child: DrawerWidget()),
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Column(

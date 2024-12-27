@@ -109,10 +109,10 @@ class _ChhavaBookState extends State<ChhavaBook> {
 
       // Load PDF file
       final bytes =
-          await rootBundle.load('assets/pdf/vrukshmandir_anil_wakankar.pdf');
+          await rootBundle.load('assets/pdf/Sambhaji.pdf');
       final dir = await getTemporaryDirectory();
 
-      final file = File('${dir.path}/vrukshmandir_anil_wakankar.pdf');
+      final file = File('${dir.path}/Sambhaji.pdf');
       await file.writeAsBytes(bytes.buffer.asUint8List());
 
       // Extract text from PDF
@@ -293,7 +293,7 @@ class _ChhavaBookState extends State<ChhavaBook> {
         appBar: AppBar(
           backgroundColor: const Color(0xFFCC5500),
           title: const Text(
-            'छावा',
+            'छत्रपती संभाजी महाराज',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

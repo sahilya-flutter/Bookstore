@@ -91,44 +91,60 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> signOut() async {
-    setState(() {
-      isLoggingOut = true;
-    });
-
     try {
-      Map<Permission, PermissionStatus> statuses = await [
-        Permission.storage,
-      ].request();
-
-      if (!statuses[Permission.storage]!.isGranted) {
-        if (mounted) {
-          _showPermissionDeniedDialog();
-        }
-        return;
-      }
-
-      await _cleanupUserData();
       await _auth.signOut();
-      await _storage.erase();
-
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const CreateAccount(),
-          ),
-          (Route<dynamic> route) => false,
-        );
-      }
+      await GetStorage().erase();
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const CreateAccount(),
+        ),
+        (Route<dynamic> route) => false,
+      );
+      log("User successfully signed out.");
     } catch (e) {
-      _showErrorDialog('Failed to log out. Please try again.');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoggingOut = false;
-        });
-      }
+      log("Error signing out: $e");
     }
   }
+
+  // Future<void> signOut() async {
+  //   setState(() {
+  //     isLoggingOut = true;
+  //   });
+
+  //   try {
+  //     Map<Permission, PermissionStatus> statuses = await [
+  //       Permission.storage,
+  //     ].request();
+
+  //     if (!statuses[Permission.storage]!.isGranted) {
+  //       if (mounted) {
+  //         _showPermissionDeniedDialog();
+  //       }
+  //       return;
+  //     }
+
+  //     await _cleanupUserData();
+  //     await _auth.signOut();
+  //     await _storage.erase();
+
+  //     if (mounted) {
+  //       Navigator.of(context).pushAndRemoveUntil(
+  //         MaterialPageRoute(
+  //           builder: (context) => const CreateAccount(),
+  //         ),
+  //         (Route<dynamic> route) => false,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     _showErrorDialog('Failed to log out. Please try again.');
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         isLoggingOut = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   Future<void> _cleanupUserData() async {
     try {
@@ -278,7 +294,6 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
                 signOut();
               },
               child: const Text(
