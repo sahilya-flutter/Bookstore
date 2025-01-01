@@ -165,19 +165,59 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.settings, color: Color(0xFFCC5500)),
-            title: const Text('Settings'),
+            leading: const Icon(Icons.support_agent, color: Color(0xFFCC5500)),
+            title: const Text('Support'),
             onTap: () {
               Navigator.pop(context);
-              // Add settings navigation
+              // Add support navigation or functionality
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Support'),
+                    content: const Text(
+                      'For support, contact us at:\n\nEmail: support@bookstore.com\nPhone: +91-9112953237',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.info_outline, color: Color(0xFFCC5500)),
-            title: const Text('About'),
+            leading:
+                const Icon(Icons.note_alt_outlined, color: Color(0xFFCC5500)),
+            title: const Text('About App'),
             onTap: () {
               Navigator.pop(context);
-              // Add about navigation
+              // Add about app navigation or functionality
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('About App Notes'),
+                    content: const Text(
+                      'This app is designed for book enthusiasts to explore and purchase '
+                      'books conveniently. Stay connected with us for updates and features!',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],

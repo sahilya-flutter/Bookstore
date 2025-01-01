@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ChhavaBook extends StatefulWidget {
-  const ChhavaBook({Key? key}) : super(key: key);
+  const ChhavaBook({super.key});
 
   @override
   State<ChhavaBook> createState() => _ChhavaBookState();

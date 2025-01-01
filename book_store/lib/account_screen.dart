@@ -106,46 +106,6 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-  // Future<void> signOut() async {
-  //   setState(() {
-  //     isLoggingOut = true;
-  //   });
-
-  //   try {
-  //     Map<Permission, PermissionStatus> statuses = await [
-  //       Permission.storage,
-  //     ].request();
-
-  //     if (!statuses[Permission.storage]!.isGranted) {
-  //       if (mounted) {
-  //         _showPermissionDeniedDialog();
-  //       }
-  //       return;
-  //     }
-
-  //     await _cleanupUserData();
-  //     await _auth.signOut();
-  //     await _storage.erase();
-
-  //     if (mounted) {
-  //       Navigator.of(context).pushAndRemoveUntil(
-  //         MaterialPageRoute(
-  //           builder: (context) => const CreateAccount(),
-  //         ),
-  //         (Route<dynamic> route) => false,
-  //       );
-  //     }
-  //   } catch (e) {
-  //     _showErrorDialog('Failed to log out. Please try again.');
-  //   } finally {
-  //     if (mounted) {
-  //       setState(() {
-  //         isLoggingOut = false;
-  //       });
-  //     }
-  //   }
-  // }
-
   Future<void> _cleanupUserData() async {
     try {
       final User? user = _auth.currentUser;
@@ -312,24 +272,6 @@ class _AccountScreenState extends State<AccountScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
-          Container(
-            decoration: const BoxDecoration(
-                // image: DecorationImage(
-                //   image: AssetImage(
-                //     'assets/images/background.jpeg',
-                //   ),
-                //   opacity: 0.8,
-                //   fit: BoxFit.cover,
-                //   colorFilter: ColorFilter.mode(
-                //     Colors.black26,
-                //     BlendMode.darken,
-                //   ),
-                // ),
-                ),
-          ),
-
-          // Content
           SafeArea(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -442,7 +384,26 @@ class _AccountScreenState extends State<AccountScreen> {
                                 icon: Icons.lock_outline,
                                 title: 'Privacy & Security',
                                 onTap: () {
-                                  // Implement privacy settings
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Privacy & Security'),
+                                        content: const Text(
+                                          'We value your privacy and take measures to secure your data. '
+                                          'All personal information is encrypted and stored securely. For more details, please refer to our Privacy Policy in the app or on our website.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                               ),
                               const Divider(height: 1),
@@ -450,7 +411,26 @@ class _AccountScreenState extends State<AccountScreen> {
                                 icon: Icons.notifications_outlined,
                                 title: 'Notifications',
                                 onTap: () {
-                                  // Implement notification settings
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Notifications'),
+                                        content: const Text(
+                                          'Stay updated with the latest book releases, special discounts, and personalized recommendations. '
+                                          'You can customize your notification preferences in the settings section.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                               ),
                               const Divider(height: 1),

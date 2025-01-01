@@ -14,17 +14,7 @@ class MainSplashScreen extends StatefulWidget {
 
 class _MainSplashScreenState extends State<MainSplashScreen> {
   final GetStorage box = GetStorage();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Navigate to LoginPage after 3 seconds
-  //   Timer(const Duration(seconds: 5), () {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => SplashScreen()),
-  //     );
-  //   });
-  // }
+
   @override
   void initState() {
     // TODO: implement initState

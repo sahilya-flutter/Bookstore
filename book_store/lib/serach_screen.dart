@@ -186,3 +186,113 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
+
+// second code
+
+// import 'package:book_store/book_card.dart';
+// import 'package:book_store/bookhome.dart';
+// import 'package:flutter/material.dart';
+
+// class SearchScreen extends StatefulWidget {
+//   const SearchScreen({super.key});
+
+//   @override
+//   State<SearchScreen> createState() => _SearchScreenState();
+// }
+
+// class _SearchScreenState extends State<SearchScreen> {
+//   // Static list of books for demonstration
+//   final List<Book> allBooks = [
+//     Book(
+//       title: "Book One",
+//       authors: ["Author A"],
+//       description: "This is the first book.",
+//       imageUrl: "",
+//       price: 20.0,
+//       discountedPrice: 15.0,
+//     ),
+//     Book(
+//       title: "Book Two",
+//       authors: ["Author B"],
+//       description: "This is the second book.",
+//       imageUrl: "",
+//       price: 25.0,
+//       discountedPrice: 20.0,
+//     ),
+//     // Add more books here...
+//   ];
+
+//   List<Book> searchResults = [];
+//   TextEditingController searchController = TextEditingController();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     searchResults = List.from(allBooks); // Show all books initially
+//   }
+
+//   void searchBooks(String query) {
+//     setState(() {
+//       if (query.isEmpty) {
+//         searchResults = List.from(allBooks); // Reset to all books
+//       } else {
+//         searchResults = allBooks.where((book) {
+//           return book.title.toLowerCase().contains(query.toLowerCase()) ||
+//               book.authors.any((author) =>
+//                   author.toLowerCase().contains(query.toLowerCase()));
+//         }).toList();
+//       }
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text("Search Books"),
+//         backgroundColor: const Color(0xFFCC5500),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(10.0),
+//         child: Column(
+//           children: [
+//             TextField(
+//               controller: searchController,
+//               onChanged: searchBooks,
+//               decoration: InputDecoration(
+//                 hintText: "Search by title or author...",
+//                 prefixIcon: const Icon(Icons.search),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//             Expanded(
+//               child: searchResults.isEmpty
+//                   ? const Center(
+//                       child: Text("No books found."),
+//                     )
+//                   : GridView.builder(
+//                       gridDelegate:
+//                           const SliverGridDelegateWithFixedCrossAxisCount(
+//                         crossAxisCount: 2,
+//                         crossAxisSpacing: 10,
+//                         mainAxisSpacing: 10,
+//                       ),
+//                       itemCount: searchResults.length,
+//                       itemBuilder: (context, index) {
+//                         final book = searchResults[index];
+//                         return BookCard(
+//                           book,
+//                           downloadedBooks: [],
+//                         );
+//                       },
+//                     ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

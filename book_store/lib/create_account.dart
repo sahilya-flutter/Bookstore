@@ -33,7 +33,8 @@ class _CreateAccountState extends State<CreateAccount> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final users = FirebaseFirestore.instance.collection('userData').obs;
   final GetStorage box = GetStorage();
-  final DatabaseReference db = FirebaseDatabase.instance.ref().child('userData');
+  final DatabaseReference db =
+      FirebaseDatabase.instance.ref().child('userData');
 
   void emailLogin(BuildContext context, String email, String password) async {
     setState(() {
@@ -101,7 +102,8 @@ class _CreateAccountState extends State<CreateAccount> {
         );
 
         // Navigate to HomePage after successful login
-        await Future.delayed(const Duration(seconds: 1)); // Wait for snackbar to be visible
+        await Future.delayed(
+            const Duration(seconds: 1)); // Wait for snackbar to be visible
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -201,7 +203,9 @@ class _CreateAccountState extends State<CreateAccount> {
                     CustomTextField(
                       controller: passwordController,
                       hintText: 'Password',
-                      icon2: const Icon(Icons.lock),
+                      icon2: IconButton(
+                          onPressed: togglepass,
+                          icon: Icon(isobscure ? Icons.lock : Icons.lock_open)),
                       icon: IconButton(
                         onPressed: togglepass,
                         icon: Icon(
@@ -222,7 +226,7 @@ class _CreateAccountState extends State<CreateAccount> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: Color(0xFFCC5500),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),

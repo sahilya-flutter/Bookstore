@@ -22,7 +22,7 @@ class _SignupState extends State<Signup> {
     setState(() {
       isobscure = !isobscure;
     });
-  }
+  } 
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -88,15 +88,18 @@ class _SignupState extends State<Signup> {
 
       // Insert user data into Firestore with image URL
       await db.child(value.user!.uid).set(userData);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-        'Signup successful.',
-        style: TextStyle(
-          backgroundColor: Colors.green,
-          color: Colors.white,
-        
-        ),
-      )));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign Up successful! '),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
+        );
       // Get.snackbar('Signup Successful', 'Please login',
       //     backgroundColor: Colors.green,
       //     colorText: Colors.white,
@@ -295,7 +298,7 @@ class _SignupState extends State<Signup> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: const Color(0xFFCC5500),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),

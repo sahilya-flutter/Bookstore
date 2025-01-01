@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:developer' as dev;
+import 'dart:math';
 import 'package:book_store/book_card.dart';
 import 'package:book_store/bookscreen/drawer.dart';
 import 'package:book_store/db_helper.dart';
@@ -55,7 +55,7 @@ class _BookHomePageState extends State<BookHomePage> {
         Uri.parse(
             'https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=40&startIndex=${(currentPage - 1) * 40}'),
       );
-
+      dev.log("${response.statusCode}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 

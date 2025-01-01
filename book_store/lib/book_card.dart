@@ -26,6 +26,8 @@ class _BookCardState extends State<BookCard> {
     getPaymentInit();
   }
 
+  bool isbuy = true;
+
   String environment = 'SANDBOX';
   String appId = '';
   String package = 'com.example.phonpe_payment';
@@ -403,3 +405,4 @@ class _BookCardState extends State<BookCard> {
     );
   }
 }
+
